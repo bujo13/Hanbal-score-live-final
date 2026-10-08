@@ -2,49 +2,54 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Control tabelă</title>
 <style>
-body{font-family:Arial,sans-serif;background:#222;color:white;text-align:center;padding:20px}
-input{font-size:20px;padding:10px;margin:5px;width:180px}
-button{font-size:22px;padding:12px 20px;margin:5px;border:0;border-radius:8px}
-.score{font-size:40px;margin:10px}
+body{font-family:Arial,sans-serif;background:#111;color:#fff;text-align:center;margin:0;padding:20px}
+input{font-size:20px;padding:8px;margin:5px;width:90%;box-sizing:border-box}
+button{font-size:24px;padding:12px 18px;margin:6px;border:0;border-radius:8px}
+.score{font-size:48px;margin:10px}
+.row{margin:15px 0}
 </style>
 </head>
 <body>
 
 <h1>Control tabelă</h1>
 
-<input id="home" placeholder="Echipa 1">
-<input id="away" placeholder="Echipa 2">
-
-<div class="score">
-<span id="homeScore">0</span> - <span id="awayScore">0</span>
+<div class="row">
+<input id="home" placeholder="ECHIPA 1">
+<button onclick="plusHome()">+1 Gazde</button>
 </div>
 
-<div>
-<button onclick="plusHome()">+1 Gazde</button>
+<div class="row">
+<input id="away" placeholder="ECHIPA 2">
 <button onclick="plusAway()">+1 Oaspeți</button>
 </div>
 
-<div>
+<div class="score" id="score">0 - 0</div>
+<div id="time">00:00</div>
+
 <button onclick="start()">START</button>
 <button onclick="stop()">STOP</button>
-<button onclick="reset()">RESET</button>
-</div>
-
-<div id="time">00:00</div>
+<button onclick="resetGame()">RESET</button>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket=io();
 
-function plusHome(){socket.emit("homePlus")}
-function plusAway(){socket.emit("awayPlus")}
-function start(){socket.emit("start")}
-function stop(){socket.emit("stop")}
-function reset(){socket.emit("reset")}
+let state={
+ home:{name:'ECHIPA 1',score:0},
+ away:{name:'ECHIPA 2',score:0},
+ elapsed:0,
+ running:false
+};
 
-socket.on("state",s=>{
- document.getElementById("homeScore").textContent=s.homeScore;
- document.getElementById("awayScore
+function send(p){
+ socket.emit('patch',p);
+}
+
+function plusHome(){
+ send({home:{score:(state.home.score||0)+1}});
+}
+
+function plusAway(){
