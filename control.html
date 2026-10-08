@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control tabelă</title>
+<style>
+body{font-family:Arial,sans-serif;background:#222;color:white;text-align:center;padding:20px}
+input{font-size:20px;padding:10px;margin:5px;width:180px}
+button{font-size:22px;padding:12px 20px;margin:5px;border:0;border-radius:8px}
+.score{font-size:40px;margin:10px}
+</style>
+</head>
+<body>
+
+<h1>Control tabelă</h1>
+
+<input id="home" placeholder="Echipa 1">
+<input id="away" placeholder="Echipa 2">
+
+<div class="score">
+<span id="homeScore">0</span> - <span id="awayScore">0</span>
+</div>
+
+<div>
+<button onclick="plusHome()">+1 Gazde</button>
+<button onclick="plusAway()">+1 Oaspeți</button>
+</div>
+
+<div>
+<button onclick="start()">START</button>
+<button onclick="stop()">STOP</button>
+<button onclick="reset()">RESET</button>
+</div>
+
+<div id="time">00:00</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket=io();
+
+function plusHome(){socket.emit("homePlus")}
+function plusAway(){socket.emit("awayPlus")}
+function start(){socket.emit("start")}
+function stop(){socket.emit("stop")}
+function reset(){socket.emit("reset")}
+
+socket.on("state",s=>{
+ document.getElementById("homeScore").textContent=s.homeScore;
+ document.getElementById("awayScore
