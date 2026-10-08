@@ -6,50 +6,49 @@
 <title>Control tabelă</title>
 <style>
 body{font-family:Arial,sans-serif;background:#111;color:#fff;text-align:center;margin:0;padding:20px}
-input{font-size:20px;padding:8px;margin:5px;width:90%;box-sizing:border-box}
-button{font-size:24px;padding:12px 18px;margin:6px;border:0;border-radius:8px}
-.score{font-size:48px;margin:10px}
-.row{margin:15px 0}
+input{font-size:20px;padding:10px;margin:6px;width:90%;box-sizing:border-box}
+button{font-size:22px;padding:14px 20px;margin:6px;border:0;border-radius:8px}
+.score{font-size:48px;margin:12px}
+.time{font-size:32px;margin:12px}
 </style>
 </head>
 <body>
 
 <h1>Control tabelă</h1>
 
-<div class="row">
-<input id="home" placeholder="ECHIPA 1">
-<button onclick="plusHome()">+1 Gazde</button>
+<input id="home" value="ECHIPA 1">
+<button onclick="homePlus()">+1 GAZDE</button>
+
+<input id="away" value="ECHIPA 2">
+<button onclick="awayPlus()">+1 OASPEȚI</button>
+
+<div class="score">
+<span id="hs">0</span> - <span id="as">0</span>
 </div>
 
-<div class="row">
-<input id="away" placeholder="ECHIPA 2">
-<button onclick="plusAway()">+1 Oaspeți</button>
-</div>
+<div class="time" id="time">00:00</div>
 
-<div class="score" id="score">0 - 0</div>
-<div id="time">00:00</div>
-
-<button onclick="start()">START</button>
-<button onclick="stop()">STOP</button>
+<button onclick="startTimer()">START</button>
+<button onclick="stopTimer()">STOP</button>
 <button onclick="resetGame()">RESET</button>
 
 <script src="/socket.io/socket.io.js"></script>
-<script>
-const socket=io();
 
-let state={
- home:{name:'ECHIPA 1',score:0},
- away:{name:'ECHIPA 2',score:0},
- elapsed:0,
- running:false
+<script>
+const socket = io();
+
+let state = {
+  home:{name:'ECHIPA 1',score:0},
+  away:{name:'ECHIPA 2',score:0},
+  elapsed:0,
+  running:false
 };
 
-function send(p){
- socket.emit('patch',p);
+function patch(data){
+  socket.emit('patch',data);
 }
 
-function plusHome(){
- send({home:{score:(state.home.score||0)+1}});
-}
-
-function plusAway(){
+function homePlus(){
+  patch({
+    home:{
+     
