@@ -49,6 +49,53 @@ function patch(data){
 }
 
 function homePlus(){
-  patch({
-    home:{
-     
+  state.home.score++;
+  patch({home:{score:state.home.score}});
+}
+
+function awayPlus(){
+  state.away.score++;
+  patch({away:{score:state.away.score}});
+}
+
+function startTimer(){
+  patch({running:true});
+}
+
+function stopTimer(){
+  patch({running:false});
+}
+
+function resetGame(){
+  socket.emit('reset');
+}
+
+document.getElementById('home').addEventListener('change',function(){
+  patch({home:{name:this.value}});
+});
+
+document.getElementById('away').addEventListener('change',function(){
+  patch({away:{name:this.value}});
+});
+
+socket.on('state',function(s){
+  state=s;
+
+  document.getElementById('home').value=s.home.name;
+  document.getElementById('away').value=s.away.name;
+
+  document.getElementById('hs').textContent=s.home.score;
+  document.getElementById('as').textContent=s.away.score;
+
+  let sec=s.elapsed||0;
+  let min=Math.floor(sec/60);
+  let rem=sec%60;
+
+  document.getElementById('time').textContent=
+    String(min).padStart(2,'0')+':' +
+    String(rem).padStart(2,'0');
+});
+</script>
+
+</body>
+</html>
